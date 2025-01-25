@@ -1,15 +1,13 @@
 import threading
+from pymongo import MongoClient
 
-from sqlalchemy import Column, String, UnicodeText, BigInteger, func, distinct
+client = MongoClient('mongodb://localhost:27017/')
+db = client['approval_db']
+approvals_collection = db['approval']
 
-from NoinoiRobot.modules.sql import BASE, SESSION
+APPROVE_INSERTION_LOCK = threading.RLock()
 
-
-class Approvals(BASE):
-    __tablename__ = "approval"
-    chat_id = Column(String(14), primary_key=True)
-    user_id = Column(BigInteger, primary_key=True)
-
+class Approvals:
     def __init__(self, chat_id, user_id):
         self.chat_id = str(chat_id)  # ensure string
         self.user_id = user_id
@@ -18,44 +16,32 @@ class Approvals(BASE):
         return "<Approve %s>" % self.user_id
 
 
-Approvals.__table__.create(checkfirst=True)
-
-APPROVE_INSERTION_LOCK = threading.RLock()
-
-
 def approve(chat_id, user_id):
     with APPROVE_INSERTION_LOCK:
         approve_user = Approvals(str(chat_id), user_id)
-        SESSION.add(approve_user)
-        SESSION.commit()
+        approvals_collection.insert_one(approve_user.__dict__)
 
 
 def is_approved(chat_id, user_id):
     try:
-        return SESSION.query(Approvals).get((str(chat_id), user_id))
+        return approvals_collection.find_one({"chat_id": str(chat_id), "user_id": user_id})
     finally:
-        SESSION.close()
+        client.close()
 
 
 def disapprove(chat_id, user_id):
     with APPROVE_INSERTION_LOCK:
-        disapprove_user = SESSION.query(Approvals).get((str(chat_id), user_id))
+        disapprove_user = approvals_collection.find_one({"chat_id": str(chat_id), "user_id": user_id})
         if disapprove_user:
-            SESSION.delete(disapprove_user)
-            SESSION.commit()
+            approvals_collection.delete_one({"chat_id": str(chat_id), "user_id": user_id})
             return True
         else:
-            SESSION.close()
+            client.close()
             return False
 
 
 def list_approved(chat_id):
     try:
-        return (
-            SESSION.query(Approvals)
-            .filter(Approvals.chat_id == str(chat_id))
-            .order_by(Approvals.user_id.asc())
-            .all()
-        )
+        return list(approvals_collection.find({"chat_id": str(chat_id)}).sort("user_id", 1))
     finally:
-        SESSION.close()
+        client.close()
