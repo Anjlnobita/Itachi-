@@ -1,20 +1,9 @@
 import threading
+from pymongo import MongoClient
 
-from NoinoiRobot.modules.sql import BASE, SESSION
-from sqlalchemy import Column, String, UnicodeText
-
-
-class BlacklistUsers(BASE):
-    __tablename__ = "blacklistusers"
-    user_id = Column(String(14), primary_key=True)
-    reason = Column(UnicodeText)
-
-    def __init__(self, user_id, reason=None):
-        self.user_id = user_id
-        self.reason = reason
-
-
-BlacklistUsers.__table__.create(checkfirst=True)
+client = MongoClient('mongodb://localhost:27017/')
+db = client['your_database_name']
+blacklist_collection = db['blacklistusers']
 
 BLACKLIST_LOCK = threading.RLock()
 BLACKLIST_USERS = set()
@@ -22,34 +11,30 @@ BLACKLIST_USERS = set()
 
 def blacklist_user(user_id, reason=None):
     with BLACKLIST_LOCK:
-        user = SESSION.query(BlacklistUsers).get(str(user_id))
+        user = blacklist_collection.find_one({"user_id": str(user_id)})
         if not user:
-            user = BlacklistUsers(str(user_id), reason)
+            blacklist_collection.insert_one({"user_id": str(user_id), "reason": reason})
         else:
-            user.reason = reason
-
-        SESSION.add(user)
-        SESSION.commit()
+            blacklist_collection.update_one({"user_id": str(user_id)}, {"$set": {"reason": reason}})
+        
         __load_blacklist_userid_list()
 
 
 def unblacklist_user(user_id):
     with BLACKLIST_LOCK:
-        user = SESSION.query(BlacklistUsers).get(str(user_id))
+        user = blacklist_collection.find_one({"user_id": str(user_id)})
         if user:
-            SESSION.delete(user)
+            blacklist_collection.delete_one({"user_id": str(user_id)})
 
-        SESSION.commit()
         __load_blacklist_userid_list()
 
 
 def get_reason(user_id):
-    user = SESSION.query(BlacklistUsers).get(str(user_id))
+    user = blacklist_collection.find_one({"user_id": str(user_id)})
     rep = ""
     if user:
-        rep = user.reason
+        rep = user.get("reason", "")
 
-    SESSION.close()
     return rep
 
 
@@ -60,9 +45,9 @@ def is_user_blacklisted(user_id):
 def __load_blacklist_userid_list():
     global BLACKLIST_USERS
     try:
-        BLACKLIST_USERS = {int(x.user_id) for x in SESSION.query(BlacklistUsers).all()}
+        BLACKLIST_USERS = {int(x['user_id']) for x in blacklist_collection.find()}
     finally:
-        SESSION.close()
+        pass
 
 
 __load_blacklist_userid_list()
