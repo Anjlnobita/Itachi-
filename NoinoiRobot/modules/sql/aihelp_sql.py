@@ -1,72 +1,56 @@
+# MongoDB Implementation of aiChats
+
+from pymongo import MongoClient
 import threading
 
-from NoinoiRobot.modules.sql import BASE, SESSION
-from sqlalchemy import Column, String
-
-
-class aiChats(BASE):
-    __tablename__ = "ai_chats"
-    chat_id = Column(String(14), primary_key=True)
-    ses_id = Column(String(70))
-    expires = Column(String(15))
-
-    def __init__(self, chat_id, ses_id, expires):
-        self.chat_id = chat_id
-        self.ses_id = ses_id
-        self.expires = expires
-
-
-aiChats.__table__.create(checkfirst=True)
+client = MongoClient('mongodb://localhost:27017/')
+db = client['chat_database']
+collection = db['ai_chats']
 
 INSERTION_LOCK = threading.RLock()
 
 
 def is_chat(chat_id):
     try:
-        chat = SESSION.query(aiChats).get(str(chat_id))
+        chat = collection.find_one({"chat_id": str(chat_id)})
         if chat:
             return True
         return False
     finally:
-        SESSION.close()
+        client.close()
 
 
 def set_ses(chat_id, ses_id, expires):
     with INSERTION_LOCK:
-        autochat = SESSION.query(aiChats).get(str(chat_id))
+        autochat = collection.find_one({"chat_id": str(chat_id)})
         if not autochat:
-            autochat = aiChats(str(chat_id), str(ses_id), str(expires))
+            autochat = {"chat_id": str(chat_id), "ses_id": str(ses_id), "expires": str(expires)}
+            collection.insert_one(autochat)
         else:
-            autochat.ses_id = str(ses_id)
-            autochat.expires = str(expires)
-
-        SESSION.add(autochat)
-        SESSION.commit()
+            collection.update_one({"chat_id": str(chat_id)}, {"$set": {"ses_id": str(ses_id), "expires": str(expires)}})
 
 
 def get_ses(chat_id):
-    autochat = SESSION.query(aiChats).get(str(chat_id))
+    autochat = collection.find_one({"chat_id": str(chat_id)})
     sesh = ""
     exp = ""
     if autochat:
-        sesh = str(autochat.ses_id)
-        exp = str(autochat.expires)
+        sesh = str(autochat['ses_id'])
+        exp = str(autochat['expires'])
 
-    SESSION.close()
+    client.close()
     return sesh, exp
 
 
 def rem_chat(chat_id):
     with INSERTION_LOCK:
-        autochat = SESSION.query(aiChats).get(str(chat_id))
+        autochat = collection.find_one({"chat_id": str(chat_id)})
         if autochat:
-            SESSION.delete(autochat)
-
-        SESSION.commit()
+            collection.delete_one({"chat_id": str(chat_id)})
 
 
 def get_all_chats():
     try:
-        return SESSION.query(aiChats.chat_id).all()
+        return [chat['chat_id'] for chat in collection.find({}, {"chat_id": 1})]
     finally:
-        SESSION.close()
+        client.close()
