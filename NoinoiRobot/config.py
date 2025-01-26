@@ -74,6 +74,38 @@ class Config(object):
         "awoo"
     )
 
+
+
+
+    # Optional fields
+    BL_CHATS = []  # List of groups that you want blacklisted.
+    DRAGONS = []  # User id of sudo users
+    DEV_USERS = []  # User id of dev users
+    DEMONS = []  # User id of support users
+    TIGERS = []  # User id of tiger users
+    WOLVES = []  # User id of whitelist users
+
+    ALLOW_CHATS = True
+    ALLOW_EXCL = True
+    DEL_CMDS = True
+    INFOPIC = True
+    LOAD = []
+    NO_LOAD = []
+    STRICT_GBAN = True
+    TEMP_DOWNLOAD_DIRECTORY = "./"
+    WORKERS = 8
+
+
+
+
+
+
+
+
+
+
+
+
     AI_API_KEY = "awoo"  # For chatbot, get one from https://coffeehouse.intellivoid.net/dashboard
     BL_CHATS = []
 
