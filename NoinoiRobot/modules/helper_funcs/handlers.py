@@ -1,6 +1,4 @@
 """
-
-
 import NoinoiRobot.modules.sql.blacklistusers_sql as sql
 from NoinoiRobot import ALLOW_EXCL
 from NoinoiRobot import DEV_USERS, DRAGONS, DEMONS, TIGERS, WOLVES
@@ -140,6 +138,5 @@ class CustomMessageHandler(MessageHandler):
         def check_update(self, update):
             if isinstance(update, Update) and update.effective_message:
                 return self.filters(update)
-
 
 """
