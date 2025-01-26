@@ -1,3 +1,5 @@
+"""
+
 import os
 
 from NoinoiRobot.modules.sql_extended.night_mode_sql import add_nightmode, rmnightmode, get_all_chat_id, is_nightmode_indb
@@ -170,6 +172,8 @@ scheduler.start()
 
 
 __mod_name__ = "ɴɪɢʜᴛ"
+
+"""
 
 __help__ = """
 𝗣𝗟𝗨𝗚𝗜𝗡𝗦 𝗙𝗥𝗢𝗠 𝗡𝗢𝗜𝗡𝗢𝗜 𝗕𝗢𝗧 📚
