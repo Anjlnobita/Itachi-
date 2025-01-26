@@ -305,7 +305,7 @@ def connected(bot: Bot, update: Update, chat, user_id, need_admin=True):
             disconnect_chat(update, bot)
     else:
         return False
-
+"""
 
 CONN_HELP = """
  Actions are available with connected groups:
@@ -319,7 +319,7 @@ CONN_HELP = """
  • Export and Imports of chat backup.
  • More in future!"""
 
-
+"""
 @run_async
 def help_connect_chat(update, context):
 
