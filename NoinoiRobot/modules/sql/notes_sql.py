@@ -1,11 +1,12 @@
 import threading
-from pymongo import MongoClient
 
-client = MongoClient('mongodb://localhost:27017/')
-db = client['notes_db']
+from NoinoiRobot.modules.sql import client, nobita as BUTTONS_COLLECTION
 
-NOTES_COLLECTION = db['notes']
-BUTTONS_COLLECTION = db['note_urls']
+from NoinoiRobot.modules.sql import nobita as NOTES_COLLECTION
+
+
+
+
 
 NOTES_INSERTION_LOCK = threading.RLock()
 BUTTONS_INSERTION_LOCK = threading.RLock()
