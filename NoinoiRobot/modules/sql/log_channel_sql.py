@@ -1,3 +1,6 @@
+"""
+
+
 import threading
 
 from NoinoiRobot.modules.sql import client, nobita as collection
@@ -55,3 +58,6 @@ def __load_log_channels():
 
 
 __load_log_channels()
+
+
+"""
