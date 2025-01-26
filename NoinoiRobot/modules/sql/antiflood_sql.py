@@ -1,3 +1,5 @@
+"""
+
 import threading
 
 
@@ -80,3 +82,5 @@ def __load_flood_settings():
     CHAT_FLOOD = {chat['chat_id']: (None, DEF_COUNT, chat['limit']) for chat in all_chats}
 
 __load_flood_settings()
+
+"""
