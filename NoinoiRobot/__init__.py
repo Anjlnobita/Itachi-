@@ -2,7 +2,6 @@ import logging
 import os
 import sys
 import time
-import spamwatch
 import aiohttp
 from aiohttp import ClientSession
 
@@ -90,11 +89,10 @@ from NoinoiRobot.config import Development as Config
     WALL_API = Config.WALL_API
     SUPPORT_CHAT = Config.SUPPORT_CHAT
     SPAMWATCH_SUPPORT_CHAT = Config.SPAMWATCH_SUPPORT_CHAT
-    SPAMWATCH_API = Config.SPAMWATCH_API
+    
     INFOPIC = Config.INFOPIC
     REDIS_URL = Config.REDIS_URL
-    ARQ_API_URL = Config.ARQ_API_URL
-    ARQ_API_KEY = Config.ARQ_API_KEY
+   
     LOG_GROUP_ID = Config.LOG_GROUP_ID
     BOT_USERNAME = Config.BOT_USERNAME
 
