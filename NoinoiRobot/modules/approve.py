@@ -1,3 +1,5 @@
+"""
+
 import html
 from NoinoiRobot.modules.disable import DisableAbleCommandHandler
 from NoinoiRobot import dispatcher, DRAGONS
@@ -214,7 +216,7 @@ dispatcher.add_handler(UNAPPROVEALL_BTN)
 
 __mod_name__ = "ᴀᴘᴘʀᴏᴠᴇ"
 
-
+"""
 
 __mod_name__ = "ᴀᴘᴘʀᴏᴠᴇ"
 __command_list__ = ["approve", "unapprove", "approved", "approval"]
