@@ -1,233 +1,124 @@
 import threading
+from pymongo import MongoClient
 
-from NoinoiRobot import dispatcher
-from NoinoiRobot.modules.sql import BASE, SESSION
-from sqlalchemy import (
-    Column,
-    ForeignKey,
-    BigInteger,
-    String,
-    UnicodeText,
-    UniqueConstraint,
-    func,
-)
-
-
-class Users(BASE):
-    __tablename__ = "users"
-    user_id = Column(BigInteger, primary_key=True)
-    username = Column(UnicodeText)
-
-    def __init__(self, user_id, username=None):
-        self.user_id = user_id
-        self.username = username
-
-    def __repr__(self):
-        return "<User {} ({})>".format(self.username, self.user_id)
-
-
-class Chats(BASE):
-    __tablename__ = "chats"
-    chat_id = Column(String(14), primary_key=True)
-    chat_name = Column(UnicodeText, nullable=False)
-
-    def __init__(self, chat_id, chat_name):
-        self.chat_id = str(chat_id)
-        self.chat_name = chat_name
-
-    def __repr__(self):
-        return "<Chat {} ({})>".format(self.chat_name, self.chat_id)
-
-
-class ChatMembers(BASE):
-    __tablename__ = "chat_members"
-    priv_chat_id = Column(BigInteger, primary_key=True)
-    # NOTE: Use dual primary key instead of private primary key?
-    chat = Column(
-        String(14),
-        ForeignKey("chats.chat_id", onupdate="CASCADE", ondelete="CASCADE"),
-        nullable=False,
-    )
-    user = Column(
-        BigInteger,
-        ForeignKey("users.user_id", onupdate="CASCADE", ondelete="CASCADE"),
-        nullable=False,
-    )
-    __table_args__ = (UniqueConstraint("chat", "user", name="_chat_members_uc"),)
-
-    def __init__(self, chat, user):
-        self.chat = chat
-        self.user = user
-
-    def __repr__(self):
-        return "<Chat user {} ({}) in chat {} ({})>".format(
-            self.user.username,
-            self.user.user_id,
-            self.chat.chat_name,
-            self.chat.chat_id,
-        )
-
-
-Users.__table__.create(checkfirst=True)
-Chats.__table__.create(checkfirst=True)
-ChatMembers.__table__.create(checkfirst=True)
+client = MongoClient('mongodb://localhost:27017/')
+db = client['NoinoiRobot']
 
 INSERTION_LOCK = threading.RLock()
 
-
 def ensure_bot_in_db():
     with INSERTION_LOCK:
-        bot = Users(dispatcher.bot.id, dispatcher.bot.username)
-        SESSION.merge(bot)
-        SESSION.commit()
-
+        bot = {
+            "user_id": dispatcher.bot.id,
+            "username": dispatcher.bot.username
+        }
+        db.users.update_one({"user_id": bot["user_id"]}, {"$set": bot}, upsert=True)
 
 def update_user(user_id, username, chat_id=None, chat_name=None):
     with INSERTION_LOCK:
-        user = SESSION.query(Users).get(user_id)
+        user = db.users.find_one({"user_id": user_id})
         if not user:
-            user = Users(user_id, username)
-            SESSION.add(user)
-            SESSION.flush()
+            user = {
+                "user_id": user_id,
+                "username": username
+            }
+            db.users.insert_one(user)
         else:
-            user.username = username
+            db.users.update_one({"user_id": user_id}, {"$set": {"username": username}})
 
-        if not chat_id or not chat_name:
-            SESSION.commit()
-            return
+        if chat_id and chat_name:
+            chat = db.chats.find_one({"chat_id": str(chat_id)})
+            if not chat:
+                chat = {
+                    "chat_id": str(chat_id),
+                    "chat_name": chat_name
+                }
+                db.chats.insert_one(chat)
+            else:
+                db.chats.update_one({"chat_id": str(chat_id)}, {"$set": {"chat_name": chat_name}})
 
-        chat = SESSION.query(Chats).get(str(chat_id))
-        if not chat:
-            chat = Chats(str(chat_id), chat_name)
-            SESSION.add(chat)
-            SESSION.flush()
-
-        else:
-            chat.chat_name = chat_name
-
-        member = (
-            SESSION.query(ChatMembers)
-            .filter(ChatMembers.chat == chat.chat_id, ChatMembers.user == user.user_id)
-            .first()
-        )
-        if not member:
-            chat_member = ChatMembers(chat.chat_id, user.user_id)
-            SESSION.add(chat_member)
-
-        SESSION.commit()
-
+            member = db.chat_members.find_one({"chat": str(chat_id), "user": user_id})
+            if not member:
+                chat_member = {
+                    "chat": str(chat_id),
+                    "user": user_id
+                }
+                db.chat_members.insert_one(chat_member)
 
 def get_userid_by_name(username):
     try:
-        return (
-            SESSION.query(Users)
-            .filter(func.lower(Users.username) == username.lower())
-            .all()
-        )
+        return list(db.users.find({"username": {"$regex": f"^{username}$", "$options": "i"}}))
     finally:
-        SESSION.close()
-
+        client.close()
 
 def get_name_by_userid(user_id):
     try:
-        return SESSION.query(Users).get(Users.user_id == int(user_id)).first()
+        return db.users.find_one({"user_id": int(user_id)})
     finally:
-        SESSION.close()
-
+        client.close()
 
 def get_chat_members(chat_id):
     try:
-        return SESSION.query(ChatMembers).filter(ChatMembers.chat == str(chat_id)).all()
+        return list(db.chat_members.find({"chat": str(chat_id)}))
     finally:
-        SESSION.close()
-
+        client.close()
 
 def get_all_chats():
     try:
-        return SESSION.query(Chats).all()
+        return list(db.chats.find())
     finally:
-        SESSION.close()
-
+        client.close()
 
 def get_all_users():
     try:
-        return SESSION.query(Users).all()
+        return list(db.users.find())
     finally:
-        SESSION.close()
-
+        client.close()
 
 def get_user_num_chats(user_id):
     try:
-        return (
-            SESSION.query(ChatMembers).filter(ChatMembers.user == int(user_id)).count()
-        )
+        return db.chat_members.count_documents({"user": int(user_id)})
     finally:
-        SESSION.close()
-
+        client.close()
 
 def get_user_com_chats(user_id):
     try:
-        chat_members = (
-            SESSION.query(ChatMembers).filter(ChatMembers.user == int(user_id)).all()
-        )
-        return [i.chat for i in chat_members]
+        chat_members = list(db.chat_members.find({"user": int(user_id)}))
+        return [i['chat'] for i in chat_members]
     finally:
-        SESSION.close()
-
+        client.close()
 
 def num_chats():
     try:
-        return SESSION.query(Chats).count()
+        return db.chats.count_documents({})
     finally:
-        SESSION.close()
-
+        client.close()
 
 def num_users():
     try:
-        return SESSION.query(Users).count()
+        return db.users.count_documents({})
     finally:
-        SESSION.close()
-
+        client.close()
 
 def migrate_chat(old_chat_id, new_chat_id):
     with INSERTION_LOCK:
-        chat = SESSION.query(Chats).get(str(old_chat_id))
-        if chat:
-            chat.chat_id = str(new_chat_id)
-        SESSION.commit()
+        db.chats.update_one({"chat_id": str(old_chat_id)}, {"$set": {"chat_id": str(new_chat_id)}})
 
-        chat_members = (
-            SESSION.query(ChatMembers)
-            .filter(ChatMembers.chat == str(old_chat_id))
-            .all()
-        )
+        chat_members = list(db.chat_members.find({"chat": str(old_chat_id)}))
         for member in chat_members:
-            member.chat = str(new_chat_id)
-        SESSION.commit()
-
-
-ensure_bot_in_db()
-
+            db.chat_members.update_one({"_id": member["_id"]}, {"$set": {"chat": str(new_chat_id)}})
 
 def del_user(user_id):
     with INSERTION_LOCK:
-        curr = SESSION.query(Users).get(user_id)
+        curr = db.users.find_one({"user_id": user_id})
         if curr:
-            SESSION.delete(curr)
-            SESSION.commit()
+            db.users.delete_one({"user_id": user_id})
+            db.chat_members.delete_many({"user": user_id})
             return True
-
-        ChatMembers.query.filter(ChatMembers.user == user_id).delete()
-        SESSION.commit()
-        SESSION.close()
     return False
-
 
 def rem_chat(chat_id):
     with INSERTION_LOCK:
-        chat = SESSION.query(Chats).get(str(chat_id))
+        chat = db.chats.find_one({"chat_id": str(chat_id)})
         if chat:
-            SESSION.delete(chat)
-            SESSION.commit()
-        else:
-            SESSION.close()
+            db.chats.delete_one({"chat_id": str(chat_id)})
