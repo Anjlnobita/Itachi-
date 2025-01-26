@@ -16,7 +16,7 @@ class Config(object):
     API_HASH = "7a4f8ed638f1369a40693574c2835217"
 
 
-    TOKEN = "BOT_TOKEN"
+    TOKEN = "7970949227:AAHHqi_yNrnpN4w0criBvVri_YX6D1BmUKg"
 
     OWNER_ID = 6777860063
 
@@ -34,7 +34,7 @@ class Config(object):
     ) 
 
     
-    DB_URI = "something://somewhat:user@hosturl:port/databasename"
+    DB_URI = "mongodb+srv://anjlnobita:tCUPU9Ty1FFvLumv@cluster0.appf0.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
 
     LOAD = []
     NO_LOAD = ["rss", "cleaner", "connection", "math"]
