@@ -5,16 +5,12 @@ from sys import argv
 from typing import Optional
 
 from NoinoiRobot import (
-    ALLOW_EXCL,
-    CERT_PATH,
-    DONATION_LINK,
+    ALLOW_EXCL,
     LOGGER,
     OWNER_ID,
     PORT,
     SUPPORT_CHAT,
     TOKEN,
-    URL,
-    WEBHOOK,
     SUPPORT_CHAT,
     dispatcher,
     StartTime,
