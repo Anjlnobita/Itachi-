@@ -1,3 +1,5 @@
+"""
+
 # Module to blacklist users and prevent them from using commands by @TheRealPhoenix
 import html
 import NoinoiRobot.modules.sql.blacklistusers_sql as sql
@@ -168,3 +170,6 @@ dispatcher.add_handler(BLUSERS_HANDLER)
 __mod_name__ = "ʙʟ-ᴜsᴇʀ"
 
 __handlers__ = [BL_HANDLER, UNBL_HANDLER, BLUSERS_HANDLER]
+
+
+"""
