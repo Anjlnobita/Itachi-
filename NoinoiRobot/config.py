@@ -43,15 +43,15 @@ class Config(object):
     SPAMWATCH_SUPPORT_CHAT = "@anime_societyy"
 
    
-    DRAGONS = int("", "1963422158")
+    DRAGONS = 1963422158
     
-    DEV_USERS = int("", "1963422158")
+    DEV_USERS = 1963422158
     
-    DEMONS = int("", "1963422158")
+    DEMONS = 1963422158
     
-    TIGERS = int("", "1963422158")
+    TIGERS = 1963422158
 
-    WOLVES = int("", "1963422158")
+    WOLVES = 1963422158
 
     DONATION_LINK = None  
     CERT_PATH = None
