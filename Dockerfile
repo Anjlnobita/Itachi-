@@ -72,3 +72,4 @@ RUN pip3 install -U -r requirements.txt
 
 # Starting Worker
 CMD ["python3","-m","lunaBot"]
+CMD bash start 
