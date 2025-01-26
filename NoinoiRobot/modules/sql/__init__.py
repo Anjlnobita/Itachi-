@@ -11,7 +11,7 @@ def start():
 
 try:
     client = start()
-    nobita = client.nobii()
+    nobita = client.nobii
 except Exception as e:
     log.exception(f"[MongoDB] Failed to connect due to {e}")
     exit()
