@@ -71,4 +71,4 @@ ENV PATH="/home/bot/bin:$PATH"
 RUN pip3 install -U -r requirements.txt
 
 # Starting Worker
-CMD bash start
+CMD ["python3","-m","NoinoiRobot"]
