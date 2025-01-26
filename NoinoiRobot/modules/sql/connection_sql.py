@@ -1,14 +1,16 @@
 import threading
 import time
 from typing import Union
-from pymongo import MongoClient
 
-client = MongoClient('mongodb://localhost:27017/')
-db = client['chat_database']
+from NoinoiRobot.modules.sql import client, nobita as CONNECTION_HISTORY_COLLECTION
 
-CHAT_ACCESS_COLLECTION = db['access_connection']
-CONNECTION_COLLECTION = db['connection']
-CONNECTION_HISTORY_COLLECTION = db['connection_history']
+from NoinoiRobot.modules.sql import nobita as CHAT_ACCESS_COLLECTION
+
+from NoinoiRobot.modules.sql import nobita as CONNECTION_COLLECTION
+
+
+
+
 
 CHAT_ACCESS_LOCK = threading.RLock()
 CONNECTION_INSERTION_LOCK = threading.RLock()
