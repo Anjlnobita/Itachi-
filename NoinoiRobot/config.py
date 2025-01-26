@@ -18,6 +18,7 @@ class Config(object):
 
     OWNER_USERNAME = "anjlnobita"
 
+    BOT_USERNAME = "anjlnobita"
 
     SUPPORT_CHAT = "anime_societyy"
 
