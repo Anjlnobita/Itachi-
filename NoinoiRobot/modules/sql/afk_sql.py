@@ -1,9 +1,9 @@
 import threading
-from pymongo import MongoClient
 
-client = MongoClient('mongodb://localhost:27017/')
-db = client['your_database_name']
-afk_collection = db['afk_users']
+from NoinoiRobot.modules.sql import client, nobita as afk_collection
+
+
+
 
 INSERTION_LOCK = threading.RLock()
 
