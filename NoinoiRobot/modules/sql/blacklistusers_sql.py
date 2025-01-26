@@ -1,3 +1,5 @@
+"""
+
 import threading
 
 from NoinoiRobot.modules.sql import client, nobita as blacklist_collection
@@ -52,3 +54,5 @@ def __load_blacklist_userid_list():
 
 
 __load_blacklist_userid_list()
+
+"""
