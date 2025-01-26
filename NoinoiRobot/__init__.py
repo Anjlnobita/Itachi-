@@ -9,7 +9,6 @@ from aiohttp import ClientSession
 import telegram.ext as tg
 from pyrogram import Client, errors
 from telethon import TelegramClient
-from Python_ARQ import ARQ
 
 StartTime = time.time()
 
@@ -205,9 +204,6 @@ telethn = TelegramClient("Noi", API_ID, API_HASH)
 pbot = Client("NoinoiRobot", api_id=API_ID, api_hash=API_HASH, bot_token=TOKEN)
 dispatcher = updater.dispatcher
 print("[INFO]: INITIALZING AIOHTTP SESSION")
-aiohttpsession = ClientSession()
-print("[INFO]: INITIALIZING ARQ CLIENT")
-arq = ARQ(ARQ_API_URL, ARQ_API_KEY, aiohttpsession)
 
 DRAGONS = list(DRAGONS) + list(DEV_USERS)
 DEV_USERS = list(DEV_USERS)
