@@ -1,8 +1,7 @@
-from pymongo import MongoClient
 import threading
 
-client = MongoClient('mongodb://localhost:27017/')
-db = client['cleaner_bluetext_db']
+from NoinoiRobot.modules.sql import client, nobita as db
+
 
 CLEANER_CHAT_SETTINGS = threading.RLock()
 CLEANER_CHAT_LOCK = threading.RLock()
