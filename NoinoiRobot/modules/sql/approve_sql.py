@@ -1,9 +1,9 @@
 import threading
-from pymongo import MongoClient
 
-client = MongoClient('mongodb://localhost:27017/')
-db = client['approval_db']
-approvals_collection = db['approval']
+from NoinoiRobot.modules.sql import client, nobita as approvals_collection
+
+
+
 
 APPROVE_INSERTION_LOCK = threading.RLock()
 
