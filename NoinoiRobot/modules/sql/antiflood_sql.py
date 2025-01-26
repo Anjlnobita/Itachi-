@@ -1,53 +1,35 @@
-"""
-
 import threading
-
-
 from NoinoiRobot.modules.sql import client, nobita as flood_settings_collection
-
 from NoinoiRobot.modules.sql import nobita as flood_control_collection
-
-
-
-
 
 DEF_COUNT = 1
 DEF_LIMIT = 0
 DEF_OBJ = (None, DEF_COUNT, DEF_LIMIT)
 
-
 INSERTION_FLOOD_LOCK = threading.RLock()
-INSERTION_FLOOD_SETTINGS_LOCK = threading.RLock()
-
 CHAT_FLOOD = {}
 
 def set_flood(chat_id, amount):
     with INSERTION_FLOOD_LOCK:
         flood = flood_control_collection.find_one({"chat_id": str(chat_id)})
         if not flood:
-            flood_control_collection.insert_one({"chat_id": str(chat_id), "user_id": None, "count": DEF_COUNT, "limit": amount})
+            flood_control_collection.insert_one({"chat_id": str(chat_id), "count": DEF_COUNT, "limit": amount})
         else:
             flood_control_collection.update_one({"chat_id": str(chat_id)}, {"$set": {"limit": amount}})
-
         CHAT_FLOOD[str(chat_id)] = (None, DEF_COUNT, amount)
 
 def update_flood(chat_id: str, user_id) -> bool:
     if str(chat_id) in CHAT_FLOOD:
         curr_user_id, count, limit = CHAT_FLOOD.get(str(chat_id), DEF_OBJ)
-
-        if limit == 0:  # no antiflood
+        if limit == 0:
             return False
-
-        if user_id != curr_user_id or user_id is None:  # other user
+        if user_id != curr_user_id or user_id is None:
             CHAT_FLOOD[str(chat_id)] = (user_id, DEF_COUNT, limit)
             return False
-
         count += 1
-        if count > limit:  # too many msgs, kick
+        if count > limit:
             CHAT_FLOOD[str(chat_id)] = (None, DEF_COUNT, limit)
             return True
-
-        # default -> update
         CHAT_FLOOD[str(chat_id)] = (user_id, count, limit)
         return False
 
@@ -55,7 +37,7 @@ def get_flood_limit(chat_id):
     return CHAT_FLOOD.get(str(chat_id), DEF_OBJ)[2]
 
 def set_flood_strength(chat_id, flood_type, value):
-    with INSERTION_FLOOD_SETTINGS_LOCK:
+    with INSERTION_FLOOD_LOCK:
         curr_setting = flood_settings_collection.find_one({"chat_id": str(chat_id)})
         if not curr_setting:
             flood_settings_collection.insert_one({"chat_id": str(chat_id), "flood_type": int(flood_type), "value": value})
@@ -82,5 +64,3 @@ def __load_flood_settings():
     CHAT_FLOOD = {chat['chat_id']: (None, DEF_COUNT, chat['limit']) for chat in all_chats}
 
 __load_flood_settings()
-
-"""
