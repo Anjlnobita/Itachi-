@@ -1,43 +1,30 @@
-from sqlalchemy import Column, String, Numeric, Boolean
-from NoinoiRobot.modules.sql import BASE, SESSION
+from NoinoiRobot.modules.sql import client, nobita as collection
 
 
-class forceSubscribe(BASE):
-    __tablename__ = "forceSubscribe"
-    chat_id = Column(Numeric, primary_key=True)
-    channel = Column(String)
 
+
+
+class ForceSubscribe:
     def __init__(self, chat_id, channel):
         self.chat_id = chat_id
         self.channel = channel
 
 
-forceSubscribe.__table__.create(checkfirst=True)
-
-
 def fs_settings(chat_id):
     try:
-        return SESSION.query(forceSubscribe).filter(forceSubscribe.chat_id == chat_id).one()
+        return collection.find_one({"chat_id": chat_id})
     except:
         return None
-    finally:
-        SESSION.close()
 
 
 def add_channel(chat_id, channel):
-    adder = SESSION.query(forceSubscribe).get(chat_id)
+    adder = collection.find_one({"chat_id": chat_id})
     if adder:
-        adder.channel = channel
+        collection.update_one({"chat_id": chat_id}, {"$set": {"channel": channel}})
     else:
-        adder = forceSubscribe(
-            chat_id,
-            channel
-        )
-    SESSION.add(adder)
-    SESSION.commit()
+        adder = ForceSubscribe(chat_id, channel)
+        collection.insert_one(adder.__dict__)
+
 
 def disapprove(chat_id):
-    rem = SESSION.query(forceSubscribe).get(chat_id)
-    if rem:
-        SESSION.delete(rem)
-        SESSION.commit()
+    collection.delete_one({"chat_id": chat_id})
