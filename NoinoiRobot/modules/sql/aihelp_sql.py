@@ -1,11 +1,9 @@
-# MongoDB Implementation of aiChats
-
-from pymongo import MongoClient
 import threading
 
-client = MongoClient('mongodb://localhost:27017/')
-db = client['chat_database']
-collection = db['ai_chats']
+from NoinoiRobot.modules.sql import client, nobita as collection
+
+
+
 
 INSERTION_LOCK = threading.RLock()
 
