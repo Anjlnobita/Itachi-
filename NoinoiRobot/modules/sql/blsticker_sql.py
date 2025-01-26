@@ -32,9 +32,6 @@ def num_stickers_filters():
 def num_stickers_chat_filters(chat_id):
     return STICKERS_FILTERS_COLLECTION.count_documents({'chat_id': str(chat_id)})
 
-def num_stickers_filter_chats():
-    return STICKERS_FILTERS_COLLECTION.distinct('chat_id')
-
 def set_blacklist_strength(chat_id, blacklist_type, value):
     with STICKERS_FILTER_INSERTION_LOCK:
         curr_setting = STICKER_SETTINGS_COLLECTION.find_one({'chat_id': str(chat_id)})
