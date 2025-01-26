@@ -1,9 +1,12 @@
 import threading
-from pymongo import MongoClient
 
-client = MongoClient('mongodb://localhost:27017/')
-db = client['rss_database']
-rss_collection = db['rss_feed']
+
+from NoinoiRobot.modules.sql import client, nobita
+
+from NoinoiRobot.modules.sql import client, nobita as rss_collection
+
+
+
 
 INSERTION_LOCK = threading.RLock()
 
