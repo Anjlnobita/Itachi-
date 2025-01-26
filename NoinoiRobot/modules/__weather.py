@@ -1,3 +1,5 @@
+"""
+
 from NoinoiRobot import telethn as tbot
 import io
 import os
@@ -87,3 +89,5 @@ async def _(event):
         response_api = await response_api_zero.read()
         with io.BytesIO(response_api) as out_file:
             await event.reply(file=out_file)
+
+"""
