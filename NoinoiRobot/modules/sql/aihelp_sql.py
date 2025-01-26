@@ -1,3 +1,5 @@
+"""
+
 import threading
 
 from NoinoiRobot.modules.sql import client, nobita as collection
@@ -52,3 +54,6 @@ def get_all_chats():
         return [chat['chat_id'] for chat in collection.find({}, {"chat_id": 1})]
     finally:
         client.close()
+
+
+"""
