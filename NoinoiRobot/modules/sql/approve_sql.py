@@ -1,3 +1,5 @@
+"""
+
 import threading
 
 from NoinoiRobot.modules.sql import client, nobita as approvals_collection
@@ -45,3 +47,4 @@ def list_approved(chat_id):
         return list(approvals_collection.find({"chat_id": str(chat_id)}).sort("user_id", 1))
     finally:
         client.close()
+"""
