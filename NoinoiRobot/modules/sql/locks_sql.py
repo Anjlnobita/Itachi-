@@ -1,9 +1,9 @@
 # MongoDB Chat Permissions and Restrictions Setup
 import threading
-from pymongo import MongoClient
 
-client = MongoClient('mongodb://localhost:27017/')
-db = client['chat_database']
+
+from NoinoiRobot.modules.sql import client, nobita as db
+
 
 PERM_LOCK = threading.RLock()
 RESTR_LOCK = threading.RLock()
