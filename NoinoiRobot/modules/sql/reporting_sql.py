@@ -1,9 +1,12 @@
 import threading
 from typing import Union
-from pymongo import MongoClient
 
-client = MongoClient('mongodb://localhost:27017/')
-db = client['reporting_db']
+from NoinoiRobot.modules.sql import client, nobita as db
+
+
+
+
+
 
 CHAT_LOCK = threading.RLock()
 USER_LOCK = threading.RLock()
