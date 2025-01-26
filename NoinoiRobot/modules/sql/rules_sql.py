@@ -1,9 +1,7 @@
 import threading
-from pymongo import MongoClient
 
-client = MongoClient('mongodb://localhost:27017/')
-db = client['your_database_name']
-rules_collection = db['rules']
+from NoinoiRobot.modules.sql import client, nobita as rules_collection
+
 
 INSERTION_LOCK = threading.RLock()
 
