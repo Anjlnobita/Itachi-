@@ -62,9 +62,9 @@ RUN apt update && apt upgrade -y && \
 RUN apt-get install -y ffmpeg python3-pip curl
 RUN pip3 install --upgrade pip setuptools
 
-RUN mkdir /lunaBot/
-COPY . /lunaBot
-WORKDIR /lunaBot
+RUN mkdir /NoinoiRobot/
+COPY . /NoinoiRobot
+WORKDIR /NoinoiRobot
 
 ENV PATH="/home/bot/bin:$PATH"
 
