@@ -1,14 +1,16 @@
 import threading
-from pymongo import MongoClient
+
+from NoinoiRobot.modules.sql import client, nobita as nsfw_chats_collection
+
+
 
 #   |----------------------------------|
 #   |   
 #   |        Kang with Credits         |
 #   |----------------------------------|
 
-client = MongoClient('mongodb://localhost:27017/')
-db = client['your_database_name']
-nsfw_chats_collection = db['nsfw_chats']
+
+
 INSERTION_LOCK = threading.RLock()
 
 def is_nsfw(chat_id):
