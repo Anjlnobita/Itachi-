@@ -1,3 +1,5 @@
+"""
+
 import threading
 
 from NoinoiRobot.modules.sql import client, nobita as afk_collection
@@ -60,3 +62,5 @@ def __load_afk_users():
 
 
 __load_afk_users()
+
+"""
