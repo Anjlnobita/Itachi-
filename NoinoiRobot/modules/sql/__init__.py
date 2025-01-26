@@ -1,8 +1,19 @@
-from pymongo import MongoClient
+# MongoDB Connection Setup
 
-def start() -> MongoClient:
+from pymongo import MongoClient
+from NoinoiRobot.config import DB_URI
+from NoinoiRobot import LOGGER as log
+
+def start():
     client = MongoClient(DB_URI)
+    log.info("[MongoDB] Connecting to database......")
     return client
 
-client = start()
-db = client['nobii']
+try:
+    client = start()
+    nobita = client.get_default_database()
+except Exception as e:
+    log.exception(f"[MongoDB] Failed to connect due to {e}")
+    exit()
+
+log.info("[MongoDB] Connection successful, client started.")
