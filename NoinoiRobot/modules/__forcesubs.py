@@ -178,7 +178,7 @@ def config(client, message):
             "❗ **Group Creator Required**\n__You have to be the group creator to do that.__"
         )
 
-
+"""
 __help__ = """𝗣𝗟𝗨𝗚𝗜𝗡𝗦 𝗙𝗥𝗢𝗠 𝗡𝗢𝗜𝗡𝗢𝗜 𝗕𝗢𝗧 📚
 *FORCE SUBSCRIBE:*
 ❍ Luna can mute members who are not subscribed your channel until they subscribe
@@ -200,4 +200,3 @@ __help__ = """𝗣𝗟𝗨𝗚𝗜𝗡𝗦 𝗙𝗥𝗢𝗠 𝗡𝗢𝗜𝗡𝗢
 """
 __mod_name__ = "ғ - sᴜʙ"
 
-"""
