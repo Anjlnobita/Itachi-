@@ -1,22 +1,12 @@
-
-"""
-
 import threading
-
-
 from NoinoiRobot.modules.sql import client, nobita as BLACKLIST_FILTERS_COLLECTION
-
 from NoinoiRobot.modules.sql import nobita as BLACKLIST_SETTINGS_COLLECTION
-
-
-
 
 BLACKLIST_FILTER_INSERTION_LOCK = threading.RLock()
 BLACKLIST_SETTINGS_INSERTION_LOCK = threading.RLock()
 
 CHAT_BLACKLISTS = {}
 CHAT_SETTINGS_BLACKLISTS = {}
-
 
 def add_to_blacklist(chat_id, trigger):
     with BLACKLIST_FILTER_INSERTION_LOCK:
@@ -29,12 +19,11 @@ def add_to_blacklist(chat_id, trigger):
         else:
             CHAT_BLACKLISTS.get(str(chat_id), set()).add(trigger)
 
-
 def rm_from_blacklist(chat_id, trigger):
     with BLACKLIST_FILTER_INSERTION_LOCK:
         blacklist_filt = BLACKLIST_FILTERS_COLLECTION.find_one({'chat_id': str(chat_id), 'trigger': trigger})
         if blacklist_filt:
-            if trigger in CHAT_BLACKLISTS.get(str(chat_id), set()):  # sanity check
+            if trigger in CHAT_BLACKLISTS.get(str(chat_id), set()):
                 CHAT_BLACKLISTS.get(str(chat_id), set()).remove(trigger)
 
             BLACKLIST_FILTERS_COLLECTION.delete_one({'chat_id': str(chat_id), 'trigger': trigger})
@@ -42,22 +31,17 @@ def rm_from_blacklist(chat_id, trigger):
 
         return False
 
-
 def get_chat_blacklist(chat_id):
     return CHAT_BLACKLISTS.get(str(chat_id), set())
-
 
 def num_blacklist_filters():
     return BLACKLIST_FILTERS_COLLECTION.count_documents({})
 
-
 def num_blacklist_chat_filters(chat_id):
     return BLACKLIST_FILTERS_COLLECTION.count_documents({'chat_id': str(chat_id)})
 
-
 def num_blacklist_filter_chats():
     return len(CHAT_BLACKLISTS)
-
 
 def set_blacklist_strength(chat_id, blacklist_type, value):
     with BLACKLIST_SETTINGS_INSERTION_LOCK:
@@ -74,14 +58,12 @@ def set_blacklist_strength(chat_id, blacklist_type, value):
             "value": value,
         }
 
-
 def get_blacklist_setting(chat_id):
     setting = CHAT_SETTINGS_BLACKLISTS.get(str(chat_id))
     if setting:
         return setting["blacklist_type"], setting["value"]
     else:
         return 1, "0"
-
 
 def __load_chat_blacklists():
     global CHAT_BLACKLISTS
@@ -95,7 +77,6 @@ def __load_chat_blacklists():
 
     CHAT_BLACKLISTS = {x: set(y) for x, y in CHAT_BLACKLISTS.items()}
 
-
 def __load_chat_settings_blacklists():
     global CHAT_SETTINGS_BLACKLISTS
     chats_settings = BLACKLIST_SETTINGS_COLLECTION.find()
@@ -105,16 +86,11 @@ def __load_chat_settings_blacklists():
             "value": x['value'],
         }
 
-
 def migrate_chat(old_chat_id, new_chat_id):
     with BLACKLIST_FILTER_INSERTION_LOCK:
         chat_filters = BLACKLIST_FILTERS_COLLECTION.find({'chat_id': str(old_chat_id)})
         for filt in chat_filters:
             BLACKLIST_FILTERS_COLLECTION.update_one({'_id': filt['_id']}, {'$set': {'chat_id': str(new_chat_id)}})
 
-
 __load_chat_blacklists()
 __load_chat_settings_blacklists()
-
-
-"""
