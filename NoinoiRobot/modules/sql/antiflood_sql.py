@@ -1,14 +1,18 @@
 import threading
-from pymongo import MongoClient
+
+
+from NoinoiRobot.modules.sql import client, nobita as flood_settings_collection
+
+from NoinoiRobot.modules.sql import nobita as flood_control_collection
+
+
+
+
 
 DEF_COUNT = 1
 DEF_LIMIT = 0
 DEF_OBJ = (None, DEF_COUNT, DEF_LIMIT)
 
-client = MongoClient('mongodb://localhost:27017/')
-db = client['flood_control_db']
-flood_control_collection = db['antiflood']
-flood_settings_collection = db['antiflood_settings']
 
 INSERTION_FLOOD_LOCK = threading.RLock()
 INSERTION_FLOOD_SETTINGS_LOCK = threading.RLock()
