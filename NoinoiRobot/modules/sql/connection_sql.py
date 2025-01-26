@@ -1,8 +1,11 @@
+# Fixing the TypeError in the code
+
 import threading
 import time
 from typing import Union
 
-from NoinoiRobot.modules.sql import client, nobita as CONNECTION_HISTORY_COLLECTION
+from NoinoiRobot.modules.sql import client
+from NoinoiRobot.modules.sql import nobita as CONNECTION_HISTORY_COLLECTION
 from NoinoiRobot.modules.sql import nobita as CHAT_ACCESS_COLLECTION
 from NoinoiRobot.modules.sql import nobita as CONNECTION_COLLECTION
 
