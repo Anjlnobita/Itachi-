@@ -1,11 +1,12 @@
 import threading
-from pymongo import MongoClient
 
-client = MongoClient('mongodb://localhost:27017/')
-db = client['your_database_name']
+from NoinoiRobot.modules.sql import client, nobita as STICKERS_FILTERS_COLLECTION
 
-STICKERS_FILTERS_COLLECTION = db['blacklist_stickers']
-STICKER_SETTINGS_COLLECTION = db['blsticker_settings']
+from NoinoiRobot.modules.sql import nobita as STICKER_SETTINGS_COLLECTION
+
+
+
+
 
 STICKERS_FILTER_INSERTION_LOCK = threading.RLock()
 CHAT_STICKERS = {}
