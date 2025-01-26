@@ -1,11 +1,12 @@
-from pymongo import MongoClient
 import threading
 
-client = MongoClient('mongodb://localhost:27017/')
-db = client['your_database_name']
 
-BLACKLIST_FILTERS_COLLECTION = db['blacklist']
-BLACKLIST_SETTINGS_COLLECTION = db['blacklist_settings']
+from NoinoiRobot.modules.sql import client, nobita as BLACKLIST_FILTERS_COLLECTION
+
+from NoinoiRobot.modules.sql import nobita as BLACKLIST_SETTINGS_COLLECTION
+
+
+
 
 BLACKLIST_FILTER_INSERTION_LOCK = threading.RLock()
 BLACKLIST_SETTINGS_INSERTION_LOCK = threading.RLock()
