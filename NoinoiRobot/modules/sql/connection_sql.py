@@ -1,5 +1,5 @@
 # Fixing the TypeError in the code
-
+"""
 import threading
 import time
 from typing import Union
@@ -128,3 +128,4 @@ def __load_user_history():
         }
 
 __load_user_history()
+"""
