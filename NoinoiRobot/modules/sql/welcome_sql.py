@@ -1,7 +1,10 @@
 import random
 import threading
 from typing import Union
-from pymongo import MongoClient
+
+from NoinoiRobot.modules.sql import client, nobita as db
+
+
 
 DEFAULT_WELCOME = "Hey {first}, how are you?"
 DEFAULT_GOODBYE = "Nice knowing ya!"
@@ -25,8 +28,6 @@ DEFAULT_GOODBYE_MESSAGES = [
     "{first} is out of the running.",
 ]
 
-client = MongoClient('mongodb://localhost:27017/')
-db = client['welcome_bot']
 
 INSERTION_LOCK = threading.RLock()
 
