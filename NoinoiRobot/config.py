@@ -25,6 +25,9 @@ class Config(object):
         -1002372313866
     )
 
+    LOG_GROUP_ID = (
+        -1002372313866
+    ) 
     EVENT_LOGS = (
         -1002372313866
     ) 
