@@ -1,7 +1,7 @@
 # MongoDB Connection Setup
 
 from pymongo import MongoClient
-from NoinoiRobot.config import DB_URI
+from NoinoiRobot import DB_URI
 from NoinoiRobot import LOGGER as log
 
 def start():
