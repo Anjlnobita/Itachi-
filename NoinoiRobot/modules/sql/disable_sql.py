@@ -1,9 +1,8 @@
 import threading
-from pymongo import MongoClient
 
-client = MongoClient('mongodb://localhost:27017/')
-db = client['your_database_name']
-disabled_commands_collection = db['disabled_commands']
+from NoinoiRobot.modules.sql import client, nobita as disabled_commands_collection
+
+
 
 DISABLE_INSERTION_LOCK = threading.RLock()
 DISABLED = {}
