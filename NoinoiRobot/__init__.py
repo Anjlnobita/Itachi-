@@ -27,79 +27,79 @@ if sys.version_info[0] < 3 or sys.version_info[1] < 6:
     )
     quit(1)
 
-
 from NoinoiRobot.config import Development as Config
 
-    TOKEN = Config.TOKEN
+TOKEN = Config.TOKEN
 
-    try:
-        OWNER_ID = int(Config.OWNER_ID)
-    except ValueError:
-        raise Exception("Your OWNER_ID variable is not a valid integer.")
+try:
+    OWNER_ID = int(Config.OWNER_ID)
+except ValueError:
+    raise Exception("Your OWNER_ID variable is not a valid integer.")
 
-    JOIN_LOGGER = Config.JOIN_LOGGER
-    OWNER_USERNAME = Config.OWNER_USERNAME
-    ALLOW_CHATS = Config.ALLOW_CHATS
-    try:
-        DRAGONS = set(int(x) for x in Config.DRAGONS or [])
-        DEV_USERS = set(int(x) for x in Config.DEV_USERS or [])
-    except ValueError:
-        raise Exception("Your sudo or dev users list does not contain valid integers.")
+JOIN_LOGGER = Config.JOIN_LOGGER
+OWNER_USERNAME = Config.OWNER_USERNAME
+ALLOW_CHATS = Config.ALLOW_CHATS
 
-    try:
-        DEMONS = set(int(x) for x in Config.DEMONS or [])
-    except ValueError:
-        raise Exception("Your support users list does not contain valid integers.")
+try:
+    DRAGONS = set(int(x) for x in Config.DRAGONS or [])
+    DEV_USERS = set(int(x) for x in Config.DEV_USERS or [])
+except ValueError:
+    raise Exception("Your sudo or dev users list does not contain valid integers.")
 
-    try:
-        WOLVES = set(int(x) for x in Config.WOLVES or [])
-    except ValueError:
-        raise Exception("Your whitelisted users list does not contain valid integers.")
+try:
+    DEMONS = set(int(x) for x in Config.DEMONS or [])
+except ValueError:
+    raise Exception("Your support users list does not contain valid integers.")
 
-    try:
-        TIGERS = set(int(x) for x in Config.TIGERS or [])
-    except ValueError:
-        raise Exception("Your tiger users list does not contain valid integers.")
+try:
+    WOLVES = set(int(x) for x in Config.WOLVES or [])
+except ValueError:
+    raise Exception("Your whitelisted users list does not contain valid integers.")
 
-    EVENT_LOGS = Config.EVENT_LOGS
-    WEBHOOK = Config.WEBHOOK
-    URL = Config.URL
-    PORT = Config.PORT
-    CERT_PATH = Config.CERT_PATH
-    API_ID = Config.API_ID
-    API_HASH = Config.API_HASH
+try:
+    TIGERS = set(int(x) for x in Config.TIGERS or [])
+except ValueError:
+    raise Exception("Your tiger users list does not contain valid integers.")
 
-    DB_URI = Config.DB_URI
-    MONGO_DB_URI = Config.MONGO_DB_URI
-    TEMP_DOWNLOAD_DIRECTORY = Config.TEMP_DOWNLOAD_DIRECTORY
-    OPENWEATHERMAP_ID = Config.OPENWEATHERMAP_ID
-    BOT_ID = Config.BOT_ID
-    VIRUS_API_KEY = Config.VIRUS_API_KEY
-    DONATION_LINK = Config.DONATION_LINK
-    LOAD = Config.LOAD
-    NO_LOAD = Config.NO_LOAD
-    DEL_CMDS = Config.DEL_CMDS
-    STRICT_GBAN = Config.STRICT_GBAN
-    WORKERS = Config.WORKERS
-    BAN_STICKER = Config.BAN_STICKER
-    ALLOW_EXCL = Config.ALLOW_EXCL
-    CASH_API_KEY = Config.CASH_API_KEY
-    TIME_API_KEY = Config.TIME_API_KEY
-    AI_API_KEY = Config.AI_API_KEY
-    WALL_API = Config.WALL_API
-    SUPPORT_CHAT = Config.SUPPORT_CHAT
-    SPAMWATCH_SUPPORT_CHAT = Config.SPAMWATCH_SUPPORT_CHAT
-    
-    INFOPIC = Config.INFOPIC
-    REDIS_URL = Config.REDIS_URL
-   
-    LOG_GROUP_ID = Config.LOG_GROUP_ID
-    BOT_USERNAME = Config.BOT_USERNAME
+EVENT_LOGS = Config.EVENT_LOGS
+WEBHOOK = Config.WEBHOOK
+URL = Config.URL
+PORT = Config.PORT
+CERT_PATH = Config.CERT_PATH
+API_ID = Config.API_ID
+API_HASH = Config.API_HASH
 
-    try:
-        BL_CHATS = set(int(x) for x in Config.BL_CHATS or [])
-    except ValueError:
-        raise Exception("Your blacklisted chats list does not contain valid integers.")
+DB_URI = Config.DB_URI
+MONGO_DB_URI = Config.MONGO_DB_URI
+TEMP_DOWNLOAD_DIRECTORY = Config.TEMP_DOWNLOAD_DIRECTORY
+OPENWEATHERMAP_ID = Config.OPENWEATHERMAP_ID
+BOT_ID = Config.BOT_ID
+VIRUS_API_KEY = Config.VIRUS_API_KEY
+DONATION_LINK = Config.DONATION_LINK
+LOAD = Config.LOAD
+NO_LOAD = Config.NO_LOAD
+DEL_CMDS = Config.DEL_CMDS
+STRICT_GBAN = Config.STRICT_GBAN
+WORKERS = Config.WORKERS
+BAN_STICKER = Config.BAN_STICKER
+ALLOW_EXCL = Config.ALLOW_EXCL
+CASH_API_KEY = Config.CASH_API_KEY
+TIME_API_KEY = Config.TIME_API_KEY
+AI_API_KEY = Config.AI_API_KEY
+WALL_API = Config.WALL_API
+SUPPORT_CHAT = Config.SUPPORT_CHAT
+SPAMWATCH_SUPPORT_CHAT = Config.SPAMWATCH_SUPPORT_CHAT
+
+INFOPIC = Config.INFOPIC
+REDIS_URL = Config.REDIS_URL
+
+LOG_GROUP_ID = Config.LOG_GROUP_ID
+BOT_USERNAME = Config.BOT_USERNAME
+
+try:
+    BL_CHATS = set(int(x) for x in Config.BL_CHATS or [])
+except ValueError:
+    raise Exception("Your blacklisted chats list does not contain valid integers.")
 
 DRAGONS.add(OWNER_ID)
 DEV_USERS.add(OWNER_ID)
@@ -117,12 +117,11 @@ else:
         sw = None
         LOGGER.warning("Can't connect to SpamWatch!")
 
-
 updater = tg.Updater(TOKEN, workers=WORKERS, use_context=True)
 telethn = TelegramClient("Noi", API_ID, API_HASH)
 pbot = Client("NoinoiRobot", api_id=API_ID, api_hash=API_HASH, bot_token=TOKEN)
 dispatcher = updater.dispatcher
-print("[INFO]: INITIALZING AIOHTTP SESSION")
+print("[INFO]: INITIALIZING AIOHTTP SESSION")
 
 DRAGONS = list(DRAGONS) + list(DEV_USERS)
 DEV_USERS = list(DEV_USERS)
@@ -130,7 +129,7 @@ WOLVES = list(WOLVES)
 DEMONS = list(DEMONS)
 TIGERS = list(TIGERS)
 
-# Load at end to ensure all prev variables have been set
+# Load at end to ensure all previous variables have been set
 from NoinoiRobot.modules.helper_funcs.handlers import (
     CustomCommandHandler,
     CustomMessageHandler,
