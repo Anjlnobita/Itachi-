@@ -1,14 +1,13 @@
 import threading
+from pymongo import MongoClient
 
-from NoinoiRobot.modules.sql import BASE, SESSION
-from sqlalchemy import Column, BigInteger, UnicodeText
+client = MongoClient('mongodb://localhost:27017/')
+db = client['user_database']
+
+INSERTION_LOCK = threading.RLock()
 
 
-class UserInfo(BASE):
-    __tablename__ = "userinfo"
-    user_id = Column(BigInteger, primary_key=True)
-    info = Column(UnicodeText)
-
+class UserInfo:
     def __init__(self, user_id, info):
         self.user_id = user_id
         self.info = info
@@ -17,11 +16,7 @@ class UserInfo(BASE):
         return "<User info %d>" % self.user_id
 
 
-class UserBio(BASE):
-    __tablename__ = "userbio"
-    user_id = Column(BigInteger, primary_key=True)
-    bio = Column(UnicodeText)
-
+class UserBio:
     def __init__(self, user_id, bio):
         self.user_id = user_id
         self.bio = bio
@@ -30,46 +25,35 @@ class UserBio(BASE):
         return "<User info %d>" % self.user_id
 
 
-UserInfo.__table__.create(checkfirst=True)
-UserBio.__table__.create(checkfirst=True)
-
-INSERTION_LOCK = threading.RLock()
-
-
 def get_user_me_info(user_id):
-    userinfo = SESSION.query(UserInfo).get(user_id)
-    SESSION.close()
+    userinfo = db.userinfo.find_one({"user_id": user_id})
     if userinfo:
-        return userinfo.info
+        return userinfo['info']
     return None
 
 
 def set_user_me_info(user_id, info):
     with INSERTION_LOCK:
-        userinfo = SESSION.query(UserInfo).get(user_id)
+        userinfo = db.userinfo.find_one({"user_id": user_id})
         if userinfo:
-            userinfo.info = info
+            db.userinfo.update_one({"user_id": user_id}, {"$set": {"info": info}})
         else:
             userinfo = UserInfo(user_id, info)
-        SESSION.add(userinfo)
-        SESSION.commit()
+            db.userinfo.insert_one(userinfo.__dict__)
 
 
 def get_user_bio(user_id):
-    userbio = SESSION.query(UserBio).get(user_id)
-    SESSION.close()
+    userbio = db.userbio.find_one({"user_id": user_id})
     if userbio:
-        return userbio.bio
+        return userbio['bio']
     return None
 
 
 def set_user_bio(user_id, bio):
     with INSERTION_LOCK:
-        userbio = SESSION.query(UserBio).get(user_id)
+        userbio = db.userbio.find_one({"user_id": user_id})
         if userbio:
-            userbio.bio = bio
+            db.userbio.update_one({"user_id": user_id}, {"$set": {"bio": bio}})
         else:
             userbio = UserBio(user_id, bio)
-
-        SESSION.add(userbio)
-        SESSION.commit()
+            db.userbio.insert_one(userbio.__dict__)
